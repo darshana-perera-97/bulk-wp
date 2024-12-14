@@ -3,6 +3,7 @@
 # dependencies
 /node_modules
 /.pnp
+/.wwebjs_auth
 .pnp.js
 
 # testing
