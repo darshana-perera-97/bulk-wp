@@ -25,8 +25,9 @@ app.use(cors());
 // File to store OTPs
 const OTP_FILE = "./otp_data.json";
 
-let resetInterval = 1 * 60 * 1000; // Set initial reset time
-let resetScheduledTime = Date.now() + resetInterval; // Set initial reset time
+// Variable to track when the reset was scheduled
+const resetInterval = 1 * 60 * 1000; // 5 minutes in milliseconds
+const resetScheduledTime = Date.now() + resetInterval;
 
 // API to get the remaining time for the WhatsApp connection reset
 app.get("/remainingTime", (req, res) => {
@@ -40,7 +41,15 @@ app.get("/remainingTime", (req, res) => {
   }
 });
 
+// Schedule the reset
+setTimeout(() => {
+  resetWhatsAppClient(); // Reset the client for a new session
+}, resetInterval);
+
 // Disconnect the client after 5 minutes
+setTimeout(() => {
+  resetWhatsAppClient(); // Reset the client for a new session
+}, 1 * 60 * 1000); // 5 minutes in milliseconds
 
 const resetWhatsAppClient = () => {
   console.log("Resetting WhatsApp client...");
@@ -165,11 +174,11 @@ client.on("ready", () => {
     clearTimeout(resetTimer);
   }
 
-  // Set a new reset timer and update the resetScheduledTime
-  resetScheduledTime = Date.now() + resetInterval;
+  // Schedule reset timer
+  const resetInterval = 5 * 60 * 1000; // 5 minutes
   resetTimer = setTimeout(() => {
-    resetWhatsAppClient(); // Reset the client for a new session
-  }, resetInterval); // 5 minutes in milliseconds
+    resetWhatsAppClient();
+  }, resetInterval);
 
   console.log(`WhatsApp client will reset in ${resetInterval / 1000} seconds.`);
 });
